@@ -1,0 +1,807 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ask to Agri Expert - Your Agriculture AI Assistant</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* General Resets and Typography */
+        :root {
+            --primary-green: #4CAF50;
+            --light-green: #8BC34A;
+            --background-gradient: linear-gradient(180deg, #F0FFF0 0%, #FFFFFF 100%); /* Light Green to White */
+            --card-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            --border-radius: 12px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--background-gradient);
+            min-height: 100vh;
+            scroll-behavior: smooth; /* Smooth scrolling */
+            color: #333;
+        }
+
+        /* --- Utilities --- */
+        .green-text { color: var(--primary-green); }
+        .content-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 60px 20px;
+        }
+        .section-title {
+            font-size: 2.5em;
+            font-weight: 700;
+            color: #222;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        .section-subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 40px;
+        }
+        .card-style {
+            background-color: white;
+            padding: 30px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--card-shadow);
+            transition: transform 0.3s ease;
+        }
+        .card-style:hover {
+            transform: translateY(-5px);
+        }
+
+        /* --- Navigation Bar --- */
+        .navbar {
+            background-color: white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            padding: 15px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        .logo {
+            font-size: 1.5em;
+            font-weight: 700;
+            color: var(--primary-green);
+        }
+        .navbar nav a {
+            color: #555;
+            text-decoration: none;
+            margin-left: 25px;
+            font-weight: 500;
+            padding-bottom: 5px;
+            transition: color 0.3s, border-bottom 0.3s;
+        }
+        .navbar nav a:hover, .navbar nav a.active {
+            color: var(--primary-green);
+            border-bottom: 2px solid var(--primary-green);
+        }
+
+        /* --- CTA Button Styling --- */
+        .cta-button {
+            background: var(--primary-green);
+            color: white;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 1em;
+            transition: background 0.3s, transform 0.2s, box-shadow 0.3s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .cta-button:hover {
+            background: var(--light-green);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 15px rgba(76, 175, 80, 0.3);
+        }
+        .primary-cta {
+            padding: 15px 40px;
+            font-size: 1.1em;
+        }
+
+        /* --- Page Sections (Single-Page App Logic) --- */
+        .page-section {
+            min-height: calc(100vh - 80px); /* Adjust for header/footer */
+            padding-top: 80px; /* Space for sticky header */
+            display: none; /* Hidden by default */
+        }
+        .page-section.active {
+            display: block; /* Show the active page */
+        }
+        .full-height-page {
+            min-height: calc(100vh - 120px); /* Tighter for the chat */
+        }
+
+        /* --- 3. Home Page Styling --- */
+        .hero-section {
+            text-align: center;
+            padding: 100px 20px;
+            background-color: rgba(255, 255, 255, 0.6);
+        }
+        .hero-section h1 {
+            font-size: 3.5em;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+        .hero-section .subtitle {
+            font-size: 1.2em;
+            color: #666;
+            margin-bottom: 40px;
+        }
+
+        /* Feature Grid */
+        .introduction-section {
+            padding: 60px 20px;
+            max-width: 1000px;
+            margin: 0 auto;
+            text-align: center;
+        }
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            margin-top: 30px;
+        }
+        .feature-card {
+            padding: 30px;
+            border-radius: var(--border-radius);
+            background-color: white;
+            box-shadow: var(--card-shadow);
+        }
+        .feature-card h3 {
+            color: var(--primary-green);
+            margin: 15px 0 10px;
+        }
+        .icon-large {
+            font-size: 2.5em;
+            color: var(--light-green);
+        }
+
+        /* --- 4. About Us Styling --- */
+        .mission-vision {
+            margin-bottom: 40px;
+        }
+        .mission-vision h3 {
+            color: var(--primary-green);
+            margin-bottom: 15px;
+            border-left: 4px solid var(--light-green);
+            padding-left: 15px;
+            font-size: 1.5em;
+        }
+        .mission-vision ul {
+            list-style: none;
+            padding: 0;
+            margin-top: 20px;
+        }
+        .mission-vision li {
+            padding: 8px 0;
+            font-size: 1.1em;
+        }
+        .team-title { margin-top: 60px; }
+        .team-grid {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            flex-wrap: wrap;
+        }
+        .team-member-card {
+            width: 250px;
+            text-align: center;
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--card-shadow);
+            padding: 20px;
+        }
+        .team-image {
+            width: 100px;
+            height: 100px;
+            background-color: var(--light-green);
+            border-radius: 50%;
+            margin: 0 auto 15px;
+        }
+        .team-member-card h4 {
+            color: #333;
+            margin-bottom: 5px;
+        }
+        .team-member-card p {
+            color: var(--primary-green);
+            font-weight: 500;
+        }
+
+        /* --- 5. Articles Page Styling --- */
+        .article-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+        .article-card {
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--card-shadow);
+            overflow: hidden;
+            transition: transform 0.3s;
+        }
+        .article-card:hover {
+            transform: translateY(-8px);
+        }
+        .article-image {
+            height: 200px;
+            background-size: cover;
+            background-position: center;
+        }
+        /* Placeholder Images - Replace with actual image URLs */
+        .img-1 { background-image: url('https://picsum.photos/400/200?random=1&seed=vertical'); }
+        .img-2 { background-image: url('https://picsum.photos/400/200?random=2&seed=soil'); }
+        .img-3 { background-image: url('https://picsum.photos/400/200?random=3&seed=drone'); }
+
+        .article-card h3 {
+            padding: 15px 20px 0;
+            color: var(--primary-green);
+        }
+        .article-card p {
+            padding: 10px 20px;
+            font-size: 0.95em;
+        }
+        .read-more {
+            display: block;
+            padding: 15px 20px;
+            color: var(--primary-green);
+            text-decoration: none;
+            font-weight: 600;
+            transition: background-color 0.3s;
+        }
+        .read-more:hover {
+            background-color: #F0FFF0;
+        }
+
+        /* --- 6. Contact Us Styling --- */
+        .contact-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 60px 20px;
+        }
+        .contact-flex {
+            display: flex;
+            gap: 40px;
+            flex-wrap: wrap;
+        }
+        .contact-form-box {
+            flex: 2;
+            min-width: 300px;
+        }
+        .contact-info-box {
+            flex: 1;
+            padding: 30px;
+            border-radius: var(--border-radius);
+            background-color: var(--primary-green);
+            color: white;
+        }
+        .contact-info-box h3 {
+            margin-bottom: 20px;
+        }
+        .contact-info-box p {
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        #contact-form input, #contact-form textarea {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 1em;
+        }
+        .social-icons {
+            margin-top: 30px;
+        }
+        .social-icons a {
+            color: white;
+            font-size: 1.5em;
+            margin-right: 15px;
+            transition: color 0.3s;
+        }
+        .social-icons a:hover {
+            color: var(--light-green);
+        }
+
+        /* --- 7. Login Page Styling --- */
+        .login-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: calc(100vh - 150px);
+        }
+        .login-card {
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+        .login-card h2 {
+            color: var(--primary-green);
+            margin-bottom: 25px;
+        }
+        .login-card label {
+            text-align: left;
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+        .login-card input {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+        .login-card .cta-button {
+            width: 100%;
+            padding: 12px;
+        }
+        .signup-link {
+            margin-top: 20px;
+            font-size: 0.9em;
+        }
+
+        /* --- 8. AI Search Box Styling (ChatGPT Style) --- */
+        .ai-chat-interface {
+            max-width: 900px;
+            height: calc(100vh - 200px); /* Height for the chat box */
+            margin: 40px auto;
+            border-radius: var(--border-radius);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            background-color: white;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        .chat-header {
+            padding: 15px 20px;
+            background-color: var(--primary-green);
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.2em;
+            font-weight: 600;
+        }
+        .chat-messages {
+            flex-grow: 1;
+            padding: 20px;
+            overflow-y: auto;
+            background-color: #f7f7f7;
+        }
+        .message {
+            margin-bottom: 15px;
+            padding: 10px 15px;
+            border-radius: 18px;
+            max-width: 80%;
+            line-height: 1.5;
+            clear: both;
+        }
+        .system-message {
+            background-color: #e6f9e6; /* Very light green */
+            color: #333;
+            float: left;
+            border-bottom-left-radius: 2px;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+        .user-message {
+            background-color: var(--primary-green);
+            color: white;
+            float: right;
+            border-bottom-right-radius: 2px;
+        }
+        .chat-input-area {
+            display: flex;
+            padding: 15px 20px;
+            border-top: 1px solid #eee;
+            background-color: white;
+        }
+        #user-input {
+            flex-grow: 1;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 25px;
+            margin-right: 10px;
+            font-size: 1em;
+        }
+        .small-cta {
+            padding: 10px 20px;
+            border-radius: 25px;
+        }
+
+        /* --- 9. Footer Styling --- */
+        .footer {
+            background-color: #333;
+            color: white;
+            padding: 30px 20px;
+            text-align: center;
+        }
+        .footer-links a {
+            color: #aaa;
+            text-decoration: none;
+            margin: 0 15px;
+            transition: color 0.3s;
+        }
+        .footer-links a:hover {
+            color: var(--light-green);
+        }
+        .copyright {
+            margin-top: 15px;
+            font-size: 0.9em;
+            color: #aaa;
+        }
+
+        /* --- Responsive Adjustments --- */
+        @media (max-width: 768px) {
+            .navbar {
+                flex-direction: column;
+                align-items: flex-start;
+                padding-bottom: 10px;
+            }
+            .navbar nav {
+                margin-top: 10px;
+            }
+            .navbar nav a {
+                margin-left: 0;
+                margin-right: 15px;
+                font-size: 0.9em;
+            }
+            .hero-section h1 {
+                font-size: 2.5em;
+            }
+            .contact-flex {
+                flex-direction: column;
+            }
+            .ai-chat-interface {
+                margin: 20px 10px;
+                height: calc(100vh - 150px);
+            }
+            .login-container {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="navbar">
+        <div class="logo">Ask to **Agri Expert**</div>
+        <nav>
+            <a href="#home" data-page="home" class="nav-link active">Home</a>
+            <a href="#about" data-page="about" class="nav-link">About Us</a>
+            <a href="#articles" data-page="articles" class="nav-link">Articles</a>
+            <a href="#contact" data-page="contact" class="nav-link">Contact Us</a>
+        </nav>
+        <button class="cta-button nav-login" data-page="login">Login <i class="fas fa-sign-in-alt"></i></button>
+    </header>
+
+    <main id="main-content">
+        
+        <section id="home" class="page-section active">
+            <div class="hero-section">
+                <h1>Your **Personal AI-Powered** Agriculture Expert</h1>
+                <p class="subtitle">Get instant, accurate, and science-backed answers to all your farming and crop questions.</p>
+                <button class="cta-button primary-cta" data-page="ai-search">Ask the Expert Now <i class="fas fa-arrow-right"></i></button>
+            </div>
+
+            <div class="introduction-section">
+                <h2>Why Ask to Agri Expert?</h2>
+                <div class="feature-grid">
+                    <div class="feature-card">
+                        <i class="fas fa-seedling icon-large"></i>
+                        <h3>Instant Diagnosis</h3>
+                        <p>Identify pests, diseases, and nutrient deficiencies with a quick query.</p>
+                    </div>
+                    <div class="feature-card">
+                        <i class="fas fa-chart-line icon-large"></i>
+                        <h3>Data-Driven Insights</h3>
+                        <p>Access up-to-date regional data on weather, soil, and market trends.</p>
+                    </div>
+                    <div class="feature-card">
+                        <i class="fas fa-microchip icon-large"></i>
+                        <h3>24/7 Availability</h3>
+                        <p>Your expert is always online, ready to answer questions anytime, anywhere.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="about" class="page-section hidden">
+            <div class="content-container">
+                <h2 class="section-title">🌱 About Our Platform</h2>
+                <div class="mission-vision">
+                    <h3>Our Mission</h3>
+                    <p>To democratize agricultural knowledge by providing cutting-edge, accessible AI technology to farmers and enthusiasts globally, ensuring sustainable and profitable farming practices.</p>
+                    
+                    <h3>Core Features</h3>
+                    <ul>
+                        <li><i class="fas fa-check-circle green-text"></i> Real-time Query Answering</li>
+                        <li><i class="fas fa-check-circle green-text"></i> Integrated Article Database</li>
+                        <li><i class="fas fa-check-circle green-text"></i> Multi-lingual Support (Future Feature)</li>
+                    </ul>
+                </div>
+
+                <h3 class="section-title team-title">Meet the Team</h3>
+                <div class="team-grid">
+                    <div class="team-member-card">
+                        <div class="team-image"></div>
+                        <h4>Dr. Harsh Singh</h4>
+                        <p>Chief Agronomist & Advisor</p>
+                    </div>
+                    <div class="team-member-card">
+                        <div class="team-image"></div>
+                        <h4>Singh Rishav</h4>
+                        <p>Lead AI/ML Developer</p>
+                    </div>
+                    <div class="team-member-card">
+                        <div class="team-image"></div>
+                        <h4>Vastavik Singh</h4>
+                        <p>Technology Architect</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="articles" class="page-section hidden">
+            <div class="content-container">
+                <h2 class="section-title">📰 Latest Agriculture Articles</h2>
+                <p class="section-subtitle">Stay updated with the latest research, techniques, and breakthroughs in farming.</p>
+                
+                <div class="article-grid">
+                    <div class="article-card">
+                        <div class="article-image img-1"></div>
+                        <h3>The Future of Vertical Farming</h3>
+                        <p>Explore how controlled-environment agriculture is revolutionizing urban food production and sustainability.</p>
+                        <a href="#" class="read-more">Read More <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                    <div class="article-card">
+                        <div class="article-image img-2"></div>
+                        <h3>Managing Soil Health in Drought</h3>
+                        <p>Essential techniques and practices for maintaining soil fertility and moisture during dry periods.</p>
+                        <a href="#" class="read-more">Read More <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                    <div class="article-card">
+                        <div class="article-image img-3"></div>
+                        <h3>The Rise of Drone Technology</h3>
+                        <p>How drones are being used for precision agriculture, from crop monitoring to targeted spraying.</p>
+                        <a href="#" class="read-more">Read More <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="contact" class="page-section hidden">
+            <div class="contact-container">
+                <h2 class="section-title">📞 Get In Touch</h2>
+                <div class="contact-flex">
+                    <div class="contact-form-box card-style">
+                        <h3>Send us a Message</h3>
+                        <form id="contact-form">
+                            <input type="text" name="name" placeholder="Your Name" required>
+                            <input type="email" name="email" placeholder="Your Email" required>
+                            <textarea name="message" rows="5" placeholder="Your Message" required></textarea>
+                            <button type="submit" class="cta-button">Submit Inquiry <i class="fas fa-paper-plane"></i></button>
+                        </form>
+                    </div>
+                    <div class="contact-info-box">
+                        <h3>Our Details</h3>
+                        <p><i class="fas fa-map-marker-alt"></i> **Location:** AgriTech Innovation Hub, Block C, Mumbai, India</p>
+                        <p><i class="fas fa-envelope"></i> **Email:** support@agriexpert.com</p>
+                        <p><i class="fas fa-phone-alt"></i> **Phone:** +91 98765 43210</p>
+                        
+                        <div class="social-icons">
+                            <a href="#"><i class="fab fa-facebook-f"></i></a>
+                            <a href="#"><i class="fab fa-twitter"></i></a>
+                            <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="login" class="page-section hidden">
+            <div class="login-container">
+                <div class="login-card card-style">
+                    <h2>Member Login</h2>
+                    <form id="login-form">
+                        <label for="email">Email Address</label>
+                        <input type="email" id="email" name="email" placeholder="Enter your email" required>
+                        
+                        <label for="password">Password</label>
+                        <input type="password" id="password" name="password" placeholder="Enter your password" required>
+                        
+                        <button type="submit" class="cta-button">Login Securely</button>
+                    </form>
+                    <p class="signup-link">Don't have an account? <a href="#" class="green-text">Sign Up</a></p>
+                </div>
+            </div>
+        </section>
+
+        <section id="ai-search" class="page-section hidden full-height-page">
+            <div class="ai-chat-interface">
+                <div class="chat-header">
+                    <i class="fas fa-robot"></i>
+                    <h3>Agri Expert AI Chatbot</h3>
+                </div>
+                
+                <div class="chat-messages" id="chat-messages">
+                    <div class="message system-message">
+                        <i class="fas fa-leaf"></i>
+                        <p>Hello! I am your Ask to Agri Expert AI. How can I assist you with your farming or crop questions today?</p>
+                    </div>
+                    </div>
+                
+                <div class="chat-input-area">
+                    <input type="text" id="user-input" placeholder="Ask a question about pests, fertilizer, or crops...">
+                    <button id="send-button" class="cta-button small-cta">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="footer">
+        <div class="footer-links">
+            <a href="#home" data-page="home">Home</a>
+            <a href="#about" data-page="about">About</a>
+            <a href="#articles" data-page="articles">Articles</a>
+            <a href="#" data-page="ai-search">Ask AI</a>
+        </div>
+        <div class="copyright">
+            &copy; 2025 Ask to Agri Expert. All rights reserved.
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const pageSections = document.querySelectorAll('.page-section');
+            const navLinks = document.querySelectorAll('.nav-link, .cta-button, .footer-links a');
+            const mainContent = document.getElementById('main-content');
+            const loginButton = document.querySelector('.nav-login');
+
+            // Function to hide all pages and show the target page
+            const navigateTo = (targetId) => {
+                // 1. Hide all pages
+                pageSections.forEach(section => {
+                    section.classList.remove('active');
+                });
+
+                // 2. Show the target page
+                const targetSection = document.getElementById(targetId);
+                if (targetSection) {
+                    targetSection.classList.add('active');
+                    
+                    // 3. Update the active state in the navbar
+                    navLinks.forEach(link => {
+                        if (link.dataset.page) {
+                            link.classList.remove('active');
+                            if (link.dataset.page === targetId) {
+                                link.classList.add('active');
+                            }
+                        }
+                    });
+
+                    // 4. Scroll to the top of the main content area (using the main container)
+                    mainContent.scrollIntoView({ behavior: 'smooth' });
+
+                    // 5. Update URL Hash (optional but good for history/refresh)
+                    window.location.hash = `#${targetId}`;
+                }
+            };
+
+            // --- Event Listeners for Navigation ---
+            navLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault(); // Prevent default link behavior
+                    const targetId = link.dataset.page;
+                    if (targetId) {
+                        navigateTo(targetId);
+                    }
+                });
+            });
+
+            // Handle initial load based on URL hash
+            const initialHash = window.location.hash.substring(1) || 'home';
+            navigateTo(initialHash);
+
+
+            // --- AI Search Box Logic Simulation ---
+            const userInput = document.getElementById('user-input');
+            const sendButton = document.getElementById('send-button');
+            const chatMessages = document.getElementById('chat-messages');
+
+            if (sendButton) {
+                sendButton.addEventListener('click', handleChatSubmit);
+                userInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        handleChatSubmit();
+                    }
+                });
+            }
+
+            function handleChatSubmit() {
+                const question = userInput.value.trim();
+                if (question === '') return;
+
+                // 1. Add User Message
+                const userMessageDiv = document.createElement('div');
+                userMessageDiv.className = 'message user-message';
+                userMessageDiv.innerHTML = `<p>${question}</p>`;
+                chatMessages.appendChild(userMessageDiv);
+                
+                userInput.value = ''; // Clear input
+
+                // 2. Simulate AI Response (Delayed)
+                setTimeout(() => {
+                    const aiResponseText = generateAIResponse(question);
+                    const aiMessageDiv = document.createElement('div');
+                    aiMessageDiv.className = 'message system-message';
+                    aiMessageDiv.innerHTML = `<i class="fas fa-leaf"></i><p>${aiResponseText}</p>`;
+                    chatMessages.appendChild(aiMessageDiv);
+
+                    // 3. Scroll to the latest message
+                    chatMessages.scrollTop = chatMessages.scrollHeight;
+                }, 1000);
+            }
+            
+            function generateAIResponse(question) {
+                // Simple logic for demonstration
+                question = question.toLowerCase();
+                if (question.includes('pest') || question.includes('insect')) {
+                    return "Identifying the specific pest is crucial. Please provide details like the crop, location, and symptoms (e.g., leaf discoloration, holes) for an accurate recommendation.";
+                } else if (question.includes('fertilizer') || question.includes('nutrient')) {
+                    return "Based on general data, a balanced N-P-K (10-10-10) is a good starting point. For precise needs, a soil test is highly recommended.";
+                } else if (question.includes('weather') || question.includes('rain')) {
+                        return "I do not have real-time weather data yet, but I recommend checking local meteorological services for the most accurate forecasts.";
+                }
+                return "That's an excellent question! Our AI is processing your query now. For best results, ensure your query is specific to a crop or farming technique.";
+            }
+
+            // --- Form Submission Prevention (for demo) ---
+            const loginForm = document.getElementById('login-form');
+            const contactForm = document.getElementById('contact-form');
+
+            if (loginForm) {
+                loginForm.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    alert('Login attempted! (Functionality is simulated for this demo.)');
+                    navigateTo('home'); // Redirect to home after 'login'
+                });
+            }
+            if (contactForm) {
+                contactForm.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    alert('Contact form submitted! We will be in touch shortly.');
+                    contactForm.reset();
+                });
+            }
+        });
+    </script>
+</body>
+</html>
